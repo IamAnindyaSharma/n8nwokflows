@@ -1,0 +1,332 @@
+{
+  "name": "Discom_Docs",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1MEWPghqloyVW2DZyieeqk4GRniN7xGH_",
+          "mode": "list",
+          "cachedResultName": "Discom_Docs",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1MEWPghqloyVW2DZyieeqk4GRniN7xGH_"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -940,
+        740
+      ],
+      "id": "22fc705b-4621-4dee-b52a-a1a6bf3e3727",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "SzWdlArPhJIzyLhE",
+          "name": "sharma.a.s.star@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -720,
+        740
+      ],
+      "id": "c3e63eba-3af8-4998-b518-ee0868531163",
+      "name": "Downlaod File",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "SzWdlArPhJIzyLhE",
+          "name": "sharma.a.s.star@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "discom-docs",
+          "mode": "list",
+          "cachedResultName": "discom-docs"
+        },
+        "options": {
+          "pineconeNamespace": "RDSS"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        -500,
+        640
+      ],
+      "id": "e5c8c3ac-e5e9-45b7-888b-196baa566d08",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "ExSo5D9gGnO2R0M6",
+          "name": "DiscomDocs"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -480,
+        860
+      ],
+      "id": "489cf765-580b-4e7c-9920-56b3fbfe8b7e",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "CXiyfOATJzyNqhIm",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        -360,
+        860
+      ],
+      "id": "8365ee54-6a62-4e59-9657-645400d9a30f",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        460,
+        560
+      ],
+      "id": "95b03d3d-2d3a-4ea7-8a5b-060681fc63b1",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        220,
+        560
+      ],
+      "id": "299784ab-2e36-4262-a279-bbec84a17847",
+      "name": "When chat message received",
+      "webhookId": "9a27f4e3-67a4-456d-99ff-5a8c182d7ff9"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        440,
+        780
+      ],
+      "id": "b2295d0e-ea61-45d3-877f-5438b069bff3",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "CXiyfOATJzyNqhIm",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Read All Discom related documents",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "discom-docs",
+          "mode": "list",
+          "cachedResultName": "discom-docs"
+        },
+        "options": {
+          "pineconeNamespace": "RDSS"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        560,
+        780
+      ],
+      "id": "376ba9de-e1ba-4ea0-ab66-4cea110ef296",
+      "name": "Pinecone Vector Store1",
+      "credentials": {
+        "pineconeApi": {
+          "id": "ExSo5D9gGnO2R0M6",
+          "name": "DiscomDocs"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        660,
+        980
+      ],
+      "id": "e324cc1c-baf1-412d-b223-ba6df0cefc63",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "CXiyfOATJzyNqhIm",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Downlaod File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Downlaod File": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "main": [
+        []
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a0744616-ee9d-4779-88b4-349edef5f99a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a22401217154d9b70a3921e023c53d085c686943536c8c85f80c2dcdc1dc577b"
+  },
+  "id": "Q9C4jFb5qwtijGLI",
+  "tags": []
+}
