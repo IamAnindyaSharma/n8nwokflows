@@ -1,0 +1,364 @@
+{
+  "name": "Job Emails",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write a email to: {{ $json.To }} for the role discussed in {{ $json.Role }} and in case if there is no role write the mail anyway.  \n\nFont Alignment: Justified\nMy Name: Anindya Sharma\nContact Number: 7399314194\nAlternate Email: sharma.anindya98@yahoo.com",
+        "options": {
+          "systemMessage": "=You are an expert outreach email assistant.\n\nYour task is to write a short, professional, and personalized email to a Talent Acquisition professional. The goal is to introduce the candidate (me) and express interest in suitable job opportunities at their company.\n\nYou will be given the recipient’s name: {{ $json.To }}, Company: {{ $json.Company }}, Job requirement or JD if any: {{ $json.Role }}\n\nTake notes from my Work Experience to make a personalized email body: Professional Experience Summary – Anindya Sharma\nAssistant Manager\nAssam Power Distribution Company Ltd. (APDCL)\nMarch 2021 – March 2024 | Guwahati, Assam\n(State Govt. PSU – Grade A Officer)\n\n🔹 1. RDSS Program Implementation\nCore team member in implementing the Revamped Distribution Sector Scheme (RDSS).\n\nLed real-time SCADA integration and cloud migration for over 500 substations to enable predictive maintenance and remote control.\n\nCoordinated substation automation and IoT deployment across the network.\n\n🔹 2. Smart Metering & Billing Efficiency\nSpearheaded planning and rollout of 20,000+ smart meters across industrial and urban consumers.\n\nEnhanced billing accuracy and load monitoring, reducing manual intervention.\n\nEnabled data-driven billing and improved demand forecasting.\n\nServed key clients like NF Railways, IOCL, and LIC under smart metering agreements.\n\n🔹 3. Revenue Protection & Anti-Theft Surveillance\nUsed load pattern analytics to identify theft-prone areas.\n\nExecuted targeted anti-theft drives in Lower Assam, recovering over INR 2 crore (20M) in lost revenue.\n\nWorked closely with regulatory teams to frame responses to assessment bills and ensure legal compliance.\n\n🔹 4. Rooftop Solar Grid Integration\nHandled net metering approvals, grid synchronization, and safety standards for rooftop solar installations, particularly for govt. and industrial clients.\n\nActed as the liaison between DISCOM, developers, and state nodal agencies.\n\n🔹 5. Energy Auditing & Load Analysis\nContributed to energy auditing and IRCA billing optimization across high-loss areas.\n\nIdentified and flagged transformer-level inefficiencies and helped reallocate load to balance feeders.\n\n🔹 6. Regulatory Affairs (Functional Exposure)\nThough not directly posted in the regulatory wing, collaborated extensively on:\n\nARR, APR, and True-Up petitions\n\nPublic hearing responses\n\nDPRs for substations and grid projects\n\nDeveloped solid understanding of tariff structures, cost allocation, and regulatory filings.\n\n🔹 7. Project Documentation and DPRs\nDrafted Detailed Project Reports (DPRs) with cost-benefit analysis for smart grid, metering, and HV substations.\n\nEnsured alignment with CEA standards and CERC/AERC regulatory guidelines.\n\nexample: Dear Mr. Palsokar,\n\nMy name is Anindya Sharma, and I am writing to express my interest in the Consultant role within Deloitte’s Government and Public Sector Practice in Lucknow.\nI am an MBA graduate from IIM Udaipur (Tier 1 institute) and hold a B.Tech in Electrical Engineering from NIT Silchar. I bring over 3.1 years of experience in the power distribution sector with APDCL, where I led projects in digital transformation, smart meter rollouts, SCADA implementation under RDSS, rooftop solar integration, and public-facing regulatory initiatives. My experience spans both on-ground operations and regulatory compliance, making me well-aligned for impactful work in the public sector.\n\nI am highly motivated to apply my domain expertise and problem-solving approach in a consulting environment focused on public sector transformation. I’ve attached my CV for your kind consideration and would be grateful for an opportunity to interview.\n\nThank you for your time and consideration.\n\nWarm regards,\n\nAnindya Sharma\n\n7399314194\n\nGuidelines:\n- Greet the person by their first name.\n- Keep it under 400 words.\n- Keep the tone polite, warm, and direct.\n- End with a thank-you and a note that I’m attaching my resume (even if not really attached).\n- Avoid overly formal or robotic tone. Sounds human.\n- Don't write the subject in the email body\n\n\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -180,
+        -60
+      ],
+      "id": "1636b8c3-8813-4e26-ae0d-715c2035751b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -92,
+        160
+      ],
+      "id": "8288f6f1-0efd-47b9-90cd-c48c77eb5783",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "CXiyfOATJzyNqhIm",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Get Pending').item.json.Email }}",
+        "subject": "=Application for open roles in {{ $('Get Pending').item.json.Company }}",
+        "emailType": "text",
+        "message": "={{ $json.output }}\n",
+        "options": {
+          "appendAttribution": false,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "=Resume"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        416,
+        -60
+      ],
+      "id": "0d6b100b-e224-4826-95c9-40416761c0cf",
+      "name": "Gmail",
+      "webhookId": "cab1a7b1-a616-42b0-b1b5-20a62838e13e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Y54QctuOsQN35tKu",
+          "name": "anindyasharma.dem2024"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://drive.google.com/uc?export=download&id=1mrpr2WpAOP1rrIpAWkOD019JvfOHVubt\n\n",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "Resume"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        196,
+        -60
+      ],
+      "id": "baa0c3fe-9c14-459f-bb8f-9a31b7a4a579",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1jjkxgvsMTeBmNHb3j5b57JSzzvLeM6FgcJPPPfcWxxs",
+          "mode": "list",
+          "cachedResultName": "Recruitment",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jjkxgvsMTeBmNHb3j5b57JSzzvLeM6FgcJPPPfcWxxs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jjkxgvsMTeBmNHb3j5b57JSzzvLeM6FgcJPPPfcWxxs/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "Pending"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": false
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -400,
+        -60
+      ],
+      "id": "3aaa9249-9032-4922-a14c-455f7cdb8b78",
+      "name": "Get Pending",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "qATu3qUOrDk9u6uF",
+          "name": "GoogleSheetDemo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1jjkxgvsMTeBmNHb3j5b57JSzzvLeM6FgcJPPPfcWxxs",
+          "mode": "list",
+          "cachedResultName": "Recruitment",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jjkxgvsMTeBmNHb3j5b57JSzzvLeM6FgcJPPPfcWxxs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jjkxgvsMTeBmNHb3j5b57JSzzvLeM6FgcJPPPfcWxxs/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Get Pending').item.json.row_number }}",
+            "Status": "Done",
+            "Email Body": "={{ $('AI Agent').item.json.output }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "To",
+              "displayName": "To",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Role",
+              "displayName": "Role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email Body",
+              "displayName": "Email Body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Resume Link",
+              "displayName": "Resume Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        636,
+        -60
+      ],
+      "id": "285fbecc-da87-4e80-9d94-f60ad23ae269",
+      "name": "Update Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "qATu3qUOrDk9u6uF",
+          "name": "GoogleSheetDemo"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -620,
+        -60
+      ],
+      "id": "b24d4f54-1dfa-4595-9044-ace5abb77493",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Pending": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get Pending",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Kolkata",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "898859be-ff71-438f-9982-91bb02275b3e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a22401217154d9b70a3921e023c53d085c686943536c8c85f80c2dcdc1dc577b"
+  },
+  "id": "XCRaW0KXS1jnfBUK",
+  "tags": []
+}

@@ -1,0 +1,337 @@
+{
+  "name": "Job Journal",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Tell Me about your work",
+        "formDescription": "Journal all the work that you have done today, consistency is the key. You will improve with consistency and feedback. ",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "placeholder": "anindyasharma.dem2024@iimu.ac.in",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "What is your work about?",
+              "placeholder": "I have created a product teardown on netflix",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Upload your file.",
+              "fieldType": "file",
+              "acceptFileTypes": ".pdf",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -2060,
+        -120
+      ],
+      "id": "e07403cd-7266-4625-bd65-fb41f1cad153",
+      "name": "On form submission",
+      "webhookId": "6d0f4294-e36d-4ce7-af4c-ebb0875f223c"
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "=Upload_your_file_",
+        "name": "={{ $json['Upload your file.'][0].filename }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1hsfGoxs6pFrE4vWnf6LGhOxe0daNzqHM",
+          "mode": "list",
+          "cachedResultName": "Work Review",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1hsfGoxs6pFrE4vWnf6LGhOxe0daNzqHM"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1840,
+        -120
+      ],
+      "id": "e05c13e0-c752-419a-a493-0aafa77e495e",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "TiZi28BPlr7omOqy",
+          "name": "anindyasharma.dem2024@iimu.ac.in"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1620,
+        -120
+      ],
+      "id": "ee3458dc-b5ba-49ee-b44d-c1108401115b",
+      "name": "Google Drive1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "TiZi28BPlr7omOqy",
+          "name": "anindyasharma.dem2024@iimu.ac.in"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Grade the following pdf from 1 to 10 and output the Score  and the feedback. \ncandidates name:{{ $('On form submission').item.json.Name }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a Product manager with 15 years of experience. Your task is to grade the PDFs on product teardowns, PRDs, Product roadmaps, etc. While giving feedback, be gentle and while giving marks be strict. "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -1400,
+        -120
+      ],
+      "id": "6514ab58-7561-49a5-a493-8cdf178093d6",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1500,
+        160
+      ],
+      "id": "bdef4ef7-c07b-4ef4-8b4a-927097bd9556",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "rehEez6dLtRbGm0B",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1XW4ZwGADGOWgt1H_xveygPjG4NFu59Wjwl8on78N4uQ",
+          "mode": "list",
+          "cachedResultName": "Job Journal",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XW4ZwGADGOWgt1H_xveygPjG4NFu59Wjwl8on78N4uQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XW4ZwGADGOWgt1H_xveygPjG4NFu59Wjwl8on78N4uQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('On form submission').item.json.Name }}",
+            "About the work": "={{ $('On form submission').item.json['What is your work about?'] }}",
+            "Score": "={{ $json.output.Score }}",
+            "Feedback": "={{ $json.output.Feedback }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "About the work",
+              "displayName": "About the work",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Feedback",
+              "displayName": "Feedback",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1020,
+        -120
+      ],
+      "id": "ff544f39-2754-4d11-a70b-f50c286ff608",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Msq0IIPpjYvQWpu2",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('On form submission').item.json.Email }}",
+        "subject": "Here is your score and feedback",
+        "emailType": "text",
+        "message": "={{ $('AI Agent').item.json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -780,
+        -100
+      ],
+      "id": "5df70ee9-5500-4455-85c4-db38fa5ef857",
+      "name": "Gmail",
+      "webhookId": "5dff0f26-f1dc-4399-9aa9-db40adc783e9",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Y54QctuOsQN35tKu",
+          "name": "anindyasharma.dem2024"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Google Drive1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b383b40c-da91-4c69-a440-e1a3c70d7f2f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a22401217154d9b70a3921e023c53d085c686943536c8c85f80c2dcdc1dc577b"
+  },
+  "id": "qRG2htFpGxH4zgc3",
+  "tags": []
+}
